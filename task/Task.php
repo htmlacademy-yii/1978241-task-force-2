@@ -3,59 +3,67 @@
 
 class Task 
 {
-    private $action = ''; // текущее действие
+  
     
-
-    public $currentStatus = 'Не определен';
+    public $status = 'Не определен';
     public $customer_id; // id заказчика
     public $executor_id; // id исполнителя
 
-    public const STATUS_NEW = 'Подано новое объявление';
-    public const STASTUS_WORK = 'В работе';
-    public const STATUS_DONE = 'Выполнено';
-    public const STATUS_REFUSE = 'Провалено';
+    public const STATUS_NEW = 'new';
+    public const STASTUS_WORK = 'in_work';
+    public const STATUS_DONE = 'done';
+    public const STATUS_REFUSE = 'refuse';
 
-    public const ACTION_CANCEL = 'Отменить';
-    public const ACTION_ANSWER = 'Откликнуться';
-    public const ACTION_DONE = 'Выполнено';
-    public const ACTION_REFUSE = 'Отказаться';
+    public const ACTION_CANCEL = 'action_canel';
+    public const ACTION_ANSWER = 'action_answer';
+    public const ACTION_DONE = 'action_done';
+    public const ACTION_REFUSE = 'action_refuse';
 
 
-    private $map = [
-       'new' => [
-           'status' => self::STATUS_NEW,
-           'actions' => [
-            'cancel' =>self::ACTION_CANCEL,
-            'answer' => self::ACTION_ANSWER]
-           ],
-        'work' => [
-            'status' => self::STASTUS_WORK,
-            'actions' => [
-                'done' => self::ACTION_DONE,
-                'refuse' => self::ACTION_REFUSE
-                    ]
-            ],
-        'done_action' => [
-            'status' => self::STATUS_DONE
-        ],
-        'refuse_action' => [
-            'status' => self::STATUS_REFUSE
-        ]
-
-    ];
+   
     
     
 
     public function __construct($action, $customer_id, $executor_id = 0)
     {
-            $this->action = $action;
 
             $this->customer_id = $customer_id;
 
             $this->executor_id = $executor_id;
 
-            $this->getStatus();
+            $this->getStatus($action);
 
+    }
+
+  
+   
+    public function getMap()
+    {
+        return  [
+
+            'new' => [
+                self::STATUS_NEW => 'Подано новое объявление',
+                'actions' => [
+                    self::ACTION_CANCEL =>'Отменить',
+                    self::ACTION_ANSWER => 'Откликнуться']
+            ],
+            'in_work' => [
+                self::STASTUS_WORK => 'В работе',
+                'actions' => [
+                    self::ACTION_DONE => 'Выполнено',
+                    self::ACTION_REFUSE => 'Отказаться'
+                ]
+            ],
+            'done' => [
+                self::STATUS_DONE => 'Выполнено',
+                'actions' => []
+            ],
+            'refuse' => [
+                self::STATUS_REFUSE => 'Провалено',
+                'action' => []
+            ]
+            
+        ];
     }
 
     /**
@@ -63,12 +71,16 @@ class Task
      */
     public function getActions()
     {
-        if(array_key_exists($this->action, $this->map)){
+        
+        foreach($this->getMap() as $key => $item){
 
-           return $actions = $this->map[$this->action]['actions'];
+            if($this->status == $item[$key]){
+
+                $actions = $item['actions'];
+            }
         }
 
-        return false;
+        return $actions;
     }
 
 
@@ -76,14 +88,16 @@ class Task
     /**
      * Получение текущего статуса
      */
-    public function getStatus()
+    private function getStatus($action)
     {   
+        $map = $this->getMap();
 
-       if(array_key_exists($this->action, $this->map)){
+       if(array_key_exists($action, $map)){
 
-        $this->currentStatus = $this->map[$this->action]['status'];
+        $this->status = $map[$action][$action];
+
        }
 
-       return $this->currentStatus;
+       return $this->status;
     }
 }
