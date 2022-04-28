@@ -1,21 +1,33 @@
 
         
-    <?php require 'Task.php';
+    <?php 
 
-    $action = 'new';
+  
+    
+   
+    require 'Task.php';
 
-    $task = new Task($action, 1, 2);
+  
 
-    $actions = $task->getActions();
+    $task = new Task(1, 2);
 
-    echo "Статус, в котором находиться задание: {$task->status}<br><br>";
+    
 
-    echo 'Возможные действия в текущем статусе: ';
+    echo "Статус, в котором находиться задание: {$task->getStatus()}<br><br>";
 
-    foreach($actions as $key => $name){
+    echo 'Возможные действия в текущем статутсе :'; print_r($task->getActions());
 
-        echo $name . ' ';
-    }
+ 
+
 
    
+
+    
+
+
+        
+
    
+
+
+  

@@ -5,11 +5,12 @@ class Task
 {
   
     
-    public $status = 'Не определен';
+    public $status = 'Подано новое объявление';
     public $customer_id; // id заказчика
     public $executor_id; // id исполнителя
 
     public const STATUS_NEW = 'new';
+    public const STATUS_CANCEL  = 'cancel';
     public const STASTUS_WORK = 'in_work';
     public const STATUS_DONE = 'done';
     public const STATUS_REFUSE = 'refuse';
@@ -24,59 +25,71 @@ class Task
     
     
 
-    public function __construct($action, $customer_id, $executor_id = 0)
+    public function __construct($customer_id, $executor_id = 0)
     {
 
             $this->customer_id = $customer_id;
 
             $this->executor_id = $executor_id;
 
-            $this->getStatus($action);
-
     }
 
-  
-   
-    public function getMap()
+     /**
+     * Карта статусов
+     */
+    public function statusMap()
+    {
+        return [
+            self::STATUS_NEW => 'Подано новое объявление',
+            self::STATUS_CANCEL => 'Отменено',
+            self::STASTUS_WORK => 'В работе',
+            self::STATUS_DONE => 'Выполнено',
+            self::STATUS_REFUSE => 'Провалено'
+        ];
+    }
+
+   /**
+    * Карта действий
+    */
+    public function actionsMap()
     {
         return  [
 
             'new' => [
-                self::STATUS_NEW => 'Подано новое объявление',
+                'status' => 'Подано новое объявление',
                 'actions' => [
                     self::ACTION_CANCEL =>'Отменить',
                     self::ACTION_ANSWER => 'Откликнуться']
             ],
             'in_work' => [
-                self::STASTUS_WORK => 'В работе',
+                'status' => 'В работе',
                 'actions' => [
                     self::ACTION_DONE => 'Выполнено',
                     self::ACTION_REFUSE => 'Отказаться'
                 ]
-            ],
-            'done' => [
-                self::STATUS_DONE => 'Выполнено',
-                'actions' => []
-            ],
-            'refuse' => [
-                self::STATUS_REFUSE => 'Провалено',
-                'action' => []
             ]
             
         ];
     }
+
+   
+
+
+   
 
     /**
      * Получение возможных действий
      */
     public function getActions()
     {
+        $actions = [];
         
-        foreach($this->getMap() as $key => $item){
+        foreach($this->actionsMap() as $key => $item){
 
-            if($this->status == $item[$key]){
+            if($this->status == $item['status']){
 
                 $actions = $item['actions'];
+                
             }
         }
 
@@ -88,13 +101,14 @@ class Task
     /**
      * Получение текущего статуса
      */
-    private function getStatus($action)
+    public function getStatus($action = 0)
     {   
-        $map = $this->getMap();
+        
+        $map = $this->statusMap();
 
        if(array_key_exists($action, $map)){
 
-        $this->status = $map[$action][$action];
+        $this->status = $map[$action];
 
        }
 
